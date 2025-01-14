@@ -13,24 +13,28 @@ RATE = 32000
 MAXIMUM = 4e8
 SCALE = 255
 FREQ = 800
-DEVICE_PATH = '/dev/rfcomm0'
+DEVICE_PATH = "/dev/rfcomm0"
 verbose = True
 
 
 def get_band_power(Pxx, f, fmin, fmax):
     ind_min = np.argmax(f > fmin) - 1
     ind_max = np.argmax(f > fmax) - 1
-    return np.trapz(Pxx[ind_min: ind_max], f[ind_min: ind_max])
+    return np.trapz(Pxx[ind_min:ind_max], f[ind_min:ind_max])
 
 
 def update():
     data = stream.read(CHUNK, exception_on_overflow=False)
-    data_int = struct.unpack(str(CHUNK) + 'h', data)
-    f, Pxx = periodogram(data_int, fs=RATE, scaling="spectrum",)
+    data_int = struct.unpack(str(CHUNK) + "h", data)
+    f, Pxx = periodogram(
+        data_int,
+        fs=RATE,
+        scaling="spectrum",
+    )
 
-    low = get_band_power(Pxx, f, 20, 500)/MAXIMUM*SCALE
-    mid = get_band_power(Pxx, f, 400, 2500)/MAXIMUM*SCALE
-    high = get_band_power(Pxx, f, 1500, 20000)/MAXIMUM*SCALE
+    low = get_band_power(Pxx, f, 20, 500) / MAXIMUM * SCALE
+    mid = get_band_power(Pxx, f, 400, 2500) / MAXIMUM * SCALE
+    high = get_band_power(Pxx, f, 1500, 20000) / MAXIMUM * SCALE
 
     low = int(np.clip(low, 0, SCALE))
     mid = int(np.clip(mid, 0, SCALE))
@@ -46,12 +50,12 @@ if __name__ == "__main__":
     if verbose:
         for i in range(p.get_device_count()):
             print(i, p.get_device_info_by_index(i))
-            if p.get_device_info_by_index(i)["name"] =='HD Pro Webcam C920: USB Audio (hw:2,0)':
+            if p.get_device_info_by_index(i)["name"] == "HD Pro Webcam C920: USB Audio (hw:2,0)":
                 MIC_INDEX = 8
                 RATE = 44100
-                
+
     print(MIC_INDEX, RATE)
-    
+
     stream = p.open(
         format=FORMAT,
         channels=CHANNELS,
@@ -62,8 +66,7 @@ if __name__ == "__main__":
         frames_per_buffer=CHUNK,
     )
 
-    ser = serial.Serial(
-        DEVICE_PATH, 115200)#, rtscts=False)
+    ser = serial.Serial(DEVICE_PATH, 115200)  # , rtscts=False)
     time.sleep(2)
 
     print("Initilialization Done.")
