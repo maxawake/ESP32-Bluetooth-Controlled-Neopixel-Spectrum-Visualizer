@@ -1,0 +1,23 @@
+[project]
+name = "esp32-bluetooth-controlled-neopixel-spectrum-visualizer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "maxawake", email = "max.m.richter@protonmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "aio-rfcomm>=1.1.0",
+    "numpy>=2.5.4",
+    "pyaudio>=0.2.14",
+    "scipy>=1.18.1",
+    "soundcard>=0.4.6",
+]
+
+[project.scripts]
+esp32-bluetooth-controlled-neopixel-spectrum-visualizer = "esp32_bluetooth_controlled_neopixel_spectrum_visualizer:main"
+
+[build-system]
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"
